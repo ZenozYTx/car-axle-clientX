@@ -9,7 +9,7 @@
         "updatebeta": "webpack",
         "format": "prettier . --write"
     },
-    "author": "Penguinify",
+    "author": "Zenoz",
     "license": "GPL-3.0",
     "devDependencies": {
         "@types/webpack-env": "^1.18.4",
