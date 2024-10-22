@@ -44,7 +44,7 @@ export const ITERATION = 0
 
 export const NAME = 'car axle'
 // please credit if u change the creator
-export const CREATOR = 'penguinify'
+export const CREATOR = 'Zenoz'
 
 export var ENV = 'production'
 if (document.location.hostname.includes('localhost')) {
