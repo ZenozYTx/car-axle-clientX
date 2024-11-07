@@ -1,14 +1,23 @@
 [
-  {
-    "type": "scripts",
-    "name": "3D",
-    "description": "very awesome",
-    "function": "var js=document.body.appendChild(document.createElement('script'));js.onerror=function(){alert('Sorry, the script could not be loaded.')};js.src='https://rawgit.com/Krazete/bookmarklets/master/tri.js';"
-  },
-  {
-    "type": "exploits",
-    "name": "Quick Scroll",
-    "description": "quickly scroll to the bottom of the page",
-    "function": "window.scrollTo(0, document.body.scrollHeight);"
-  }
+    {
+        "type": "module",
+        "name": "Anti Force Reload",
+        "description": "Prevents the website from reloading by opening a cancelable alert",
+        "handler": "antiforcereload",
+        "bookmarklet": "javascript:alert('Anti Force Reload active!');"
+    },
+    {
+        "type": "module",
+        "name": "Better Force Select",
+        "description": "Allows you to select unselectable text on the screen",
+        "handler": "betterforceselect",
+        "bookmarklet": "javascript:(function(){ /* code to enable force select */ })();"
+    },
+    {
+        "type": "module",
+        "name": "Tri.js Loader",
+        "description": "Loads the Tri.js bookmarklet script",
+        "handler": "loadTriScript",
+        "bookmarklet": "javascript:(function(){var js=document.body.appendChild(document.createElement('script'));js.onerror=function(){alert('Script could not be loaded.')};js.src='https://rawgit.com/Krazete/bookmarklets/master/tri.js'})();"
+    }
 ]
