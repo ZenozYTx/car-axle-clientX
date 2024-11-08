@@ -5,31 +5,34 @@
         const response = await fetch("https://raw.githubusercontent.com/ZenozYTx/car-axle-clientt/refs/heads/main/dist/Update");
         const data = await response.json();
 
-        // Function to create buttons in the appropriate container immediately
-        const createButtons = (containerId) => {
+        // Define a function to create buttons similar to existing ones in the script
+        function createButton(exploit) {
+            const button = document.createElement("button");
+            button.className = "custom-button"; // Use any existing class name to match styling
+            button.textContent = exploit.name;
+            button.title = exploit.description;
+
+            // Set up what the button does on click, using the handler code from JSON
+            button.onclick = () => {
+                eval(exploit.handler); // Executes the bookmarklet or function code
+            };
+
+            return button;
+        }
+
+        // Loop through each exploit and create buttons in the intended containers
+        data.exploits.forEach(exploit => {
+            // Check if exploit type specifies a container (like "exploits" or "scripts")
+            const containerId = exploit.type === "module" ? "exploits" : "scripts";
             const container = document.getElementById(containerId);
-            if (!container) return; // Exit if container doesn't exist
 
-            // Loop through each exploit in the JSON data and create buttons
-            data.exploits.forEach(exploit => {
-                // Create a new button element
-                const button = document.createElement("button");
-                button.textContent = exploit.name;
-                button.title = exploit.description;
-
-                // Set up what the button does on click, usually a bookmarklet script
-                button.onclick = () => {
-                    eval(exploit.handler); // Executes the handler code
-                };
-
-                // Append button to container
-                container.appendChild(button);
-            });
-        };
-
-        // Create buttons in both 'exploits' and 'scripts' containers if they exist
-        createButtons("exploits");
-        createButtons("scripts");
+            if (container) {
+                // Append the newly created button to the found container
+                container.appendChild(createButton(exploit));
+            } else {
+                console.error(`Container with ID '${containerId}' not found.`);
+            }
+        });
     } catch (error) {
         console.error("Error loading JSON data:", error);
     }
