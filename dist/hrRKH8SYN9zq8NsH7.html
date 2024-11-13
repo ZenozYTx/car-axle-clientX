@@ -1,0 +1,1565 @@
+<html><head><base href="."><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EVIL Tycoon Manager</title>
+<style>
+:root {
+  --evil-red: #ff0000;
+  --evil-black: #1a0000;
+  --evil-gold: #ffd700;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--evil-black);
+  color: var(--evil-red);
+  font-family: 'Creepster', cursive;
+  overflow-x: hidden;
+}
+
+.evil-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.evil-title {
+  font-size: 48px;
+  text-shadow: 0 0 10px var(--evil-red);
+  animation: glow 2s infinite alternate;
+}
+
+.evil-factory {
+  width: 100%;
+  height: 200px;
+  background: #300;
+  border: 4px solid var(--evil-gold);
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 2px;
+  padding: 2px;
+}
+
+.grid-cell {
+  background: rgba(80, 0, 0, 0.5);
+  border: 1px solid var(--evil-gold);
+  position: relative;
+  cursor: pointer;
+  min-height: 30px;
+}
+
+.grid-cell:hover {
+  background: rgba(120, 0, 0, 0.5);
+}
+
+.money-counter {
+  font-size: 32px;
+  color: var(--evil-gold);
+  text-shadow: 0 0 5px var(--evil-gold);
+}
+
+.evil-button {
+  background: var(--evil-red);
+  color: var(--evil-black);
+  border: 2px solid var(--evil-gold);
+  padding: 10px 20px;
+  font-size: 20px;
+  margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.evil-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px var(--evil-red);
+}
+
+.minion {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  background: var(--evil-gold);
+  border-radius: 50%;
+  animation: none;
+}
+
+.projectile {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--evil-red);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.invader {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #666;
+  right: 0;
+  border-radius: 5px;
+  animation: walk 10s linear;
+  z-index: 1;
+  transition: opacity 0.3s;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px var(--evil-red);
+  }
+  to {
+    text-shadow: 0 0 20px var(--evil-red), 0 0 30px var(--evil-red);
+  }
+}
+
+@keyframes walk {
+  from {
+    right: -30px;
+  }
+  to {
+    right: 100%;
+  }
+}
+
+.gamepass-popup {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.gamepass-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  color: #666;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+.gamepass-close:hover {
+  color: #000;
+  background: rgba(0,0,0,0.1);
+}
+
+.gamepass-title {
+  color: #393B3D;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.gamepass-price {
+  color: #00A2FF;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+.gamepass-button {
+  background: #02B757;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.gamepass-button:hover {
+  background: #00A24D;
+}
+
+.gamepass-button.evil {
+  background: var(--evil-red);
+  animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+    background: var(--evil-red);
+    color: var(--evil-black);
+    opacity: 0.8;
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    transform: scale(2) rotate(-10deg);
+    opacity: 0;
+    filter: hue-rotate(360deg);
+  }
+}
+
+.exploding {
+  animation: explode 1s forwards;
+  background: var(--evil-red) !important;
+  border: 2px solid var(--evil-gold);
+}
+
+.exploding * {
+  color: var(--evil-black) !important;
+  font-family: 'Creepster', cursive !important;
+  text-shadow: 0 0 5px var(--evil-gold);
+}
+
+.evil-sidebar {
+  position: fixed;
+  left: -270px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background: rgba(26, 0, 0, 0.95);
+  border-right: 3px solid var(--evil-gold);
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 5px 0 15px rgba(255, 0, 0, 0.3);
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.hiring-shop {
+  position: fixed;
+  right: -300px;
+  top: 0;
+  width: 280px;
+  height: 100%;
+  background: rgba(26, 0, 0, 0.95);
+  border-left: 3px solid var(--evil-gold);
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: -5px 0 15px rgba(255, 0, 0, 0.3);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.minion-card {
+  background: #300;
+  border: 2px solid var(--evil-gold);
+  margin: 10px 0;
+  padding: 15px;
+  color: var(--evil-red);
+  text-align: left;
+}
+
+.minion-card:hover {
+  transform: translateX(-10px);
+  background: #400;
+}
+
+.minion-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  margin: 10px 0;
+  font-size: 0.9em;
+}
+
+.minion-stat {
+  color: var(--evil-gold);
+}
+
+.shop-item {
+  background: #300;
+  border: 2px solid var(--evil-gold);
+  margin: 10px 0;
+  padding: 10px;
+  color: var(--evil-red);
+  text-align: left;
+  transition: all 0.3s;
+}
+
+.shop-item:hover {
+  transform: translateX(10px);
+  background: #400;
+}
+
+.shop-item h3 {
+  margin: 0;
+  color: var(--evil-gold);
+  font-size: 1.2em;
+}
+
+.shop-item p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.shop-item button {
+  background: var(--evil-red);
+  color: var(--evil-black);
+  border: 1px solid var(--evil-gold);
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 5px;
+  transition: all 0.3s;
+}
+
+.shop-item button:hover {
+  background: var(--evil-gold);
+}
+
+.locked {
+  filter: grayscale(100%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(26, 0, 0, 0.95);
+  border: 2px solid var(--evil-gold);
+  color: var(--evil-red);
+  padding: 20px;
+  border-radius: 5px;
+  font-size: 24px;
+  z-index: 1001;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pause-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 2000;
+  display: none;
+}
+
+.message-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background: #111;
+  border: 2px solid var(--evil-gold);
+  padding: 20px;
+  z-index: 2001;
+  display: none;
+  color: var(--evil-red);
+  text-align: center;
+}
+
+.message-option {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.lawyer-message {
+  color: var(--evil-gold);
+  margin: 10px 0;
+  padding: 10px;
+  background: #300;
+  border-radius: 5px;
+}
+
+.notification {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.version-text {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--evil-red);
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.obby-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--evil-black);
+  z-index: 2000;
+}
+
+.obby-area {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.platform {
+  position: absolute;
+  background: var(--evil-gold);
+  border: 2px solid var(--evil-red);
+}
+
+.player {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: var(--evil-red);
+  border-radius: 50%;
+}
+
+.player.with-boots::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--evil-gold);
+  border-radius: 0 0 5px 5px;
+}
+
+.teleport-ghost {
+  opacity: 0.5;
+  pointer-events: none;
+  background: rgba(255, 0, 0, 0.5) !important;
+}
+
+.speed-trail {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--evil-red);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.5;
+  transition: opacity 0.5s;
+}
+
+.mobile-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: none; 
+  z-index: 2002;
+}
+
+.joystick {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255,0,0,0.3);
+  border: 2px solid var(--evil-gold);
+  border-radius: 50%;
+  touch-action: none;
+}
+
+.jump-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  background: var(--evil-red);
+  border: 2px solid var(--evil-gold);
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  font-family: 'Creepster', cursive;
+  font-size: 20px;
+  touch-action: none;
+}
+
+.teleport-button {
+  position: fixed;
+  bottom: 110px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  background: var(--evil-gold);
+  border: 2px solid var(--evil-red);
+  border-radius: 50%;
+  color: var(--evil-black);
+  font-weight: bold;
+  font-family: 'Creepster', cursive;
+  font-size: 16px;
+  touch-action: none;
+  z-index: 2002;
+}
+
+.quit-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--evil-red);
+  color: white;
+  border: 2px solid var(--evil-gold);
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: 'Creepster', cursive;
+  z-index: 2002;
+}
+
+.finish-line {
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  width: 50px;
+  height: 100px;
+  background: var(--evil-gold);
+  border: 2px solid var(--evil-red);
+  animation: glow 1s infinite alternate;
+}
+
+.feedback-input {
+  width: 100%;
+  min-height: 100px;
+  margin: 10px 0;
+  padding: 10px;
+  background: #300;
+  border: 2px solid var(--evil-gold);
+  color: var(--evil-red);
+  font-family: inherit;
+  resize: vertical;
+}
+
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: block;
+  }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="evil-sidebar">
+  <div class="shop-item">
+    <h3>Evil Jump Boots</h3>
+    <p>Jump higher in the obby!</p>
+    <p>Cost: $200</p>
+    <button onclick="buyItem('jumpBoots', 200)">Purchase</button>
+  </div>
+  
+  <div class="shop-item">
+    <h3>Speed Demon</h3>
+    <p>Run faster than ever!</p>
+    <p>Cost: $500</p>
+    <button onclick="buyItem('speedBoost', 500)">Purchase</button>
+  </div>
+  
+  <div class="shop-item locked">
+    <h3>Evil Wings</h3>
+    <p>Fly over obstacles!</p>
+    <p>Cost: $1000</p>
+    <button onclick="buyItem('wings', 1000)">Purchase</button>
+  </div>
+  
+  <div class="shop-item locked">
+    <h3>Lava Immunity</h3>
+    <p>Walk through lava!</p>
+    <p>Cost: $2000</p>
+    <button onclick="buyItem('lavaImmunity', 2000)">Purchase</button>
+  </div>
+  
+  <div class="shop-item locked">
+    <h3>Evil Teleporter</h3>
+    <p>Skip difficult jumps!</p>
+    <p>Cost: $5000</p>
+    <button onclick="buyItem('teleporter', 5000)">Purchase</button>
+  </div>
+</div>
+
+<div class="hiring-shop" id="hiringShop">
+  <div class="minion-card">
+    <h3>Basic Evil Minion</h3>
+    <div class="minion-stats">
+      <div class="minion-stat">Health: 10</div>
+      <div class="minion-stat">Damage: 1</div>
+      <div class="minion-stat">Fire Rate: 1s</div>
+      <div class="minion-stat">Range: Medium</div>
+    </div>
+    <button class="evil-button" onclick="hireSpecialMinion('basic', 10)">Hire ($10)</button>
+  </div>
+  
+  <div class="minion-card">
+    <h3>Heavy Minion</h3>
+    <div class="minion-stats">
+      <div class="minion-stat">Health: 15</div>
+      <div class="minion-stat">Damage: 2</div>
+      <div class="minion-stat">Fire Rate: 2s</div>
+      <div class="minion-stat">Range: Short</div>
+    </div>
+    <button class="evil-button" onclick="hireSpecialMinion('heavy', 25)">Hire ($25)</button>
+  </div>
+  
+  <div class="minion-card">
+    <h3>Sniper Minion</h3>
+    <div class="minion-stats">
+      <div class="minion-stat">Health: 10</div>
+      <div class="minion-stat">Damage: 3</div>
+      <div class="minion-stat">Fire Rate: 3s</div>
+      <div class="minion-stat">Range: Long</div>
+    </div>
+    <button class="evil-button" onclick="hireSpecialMinion('sniper', 50)">Hire ($50)</button>
+  </div>
+</div>
+
+<div class="evil-container">
+  <h1 class="evil-title" onclick="showLogin()">EVIL TYCOON</h1>
+  <div class="money-counter">Evil Money: $<span id="money">0</span></div>
+  <div class="evil-factory" id="factory"></div>
+  
+  <button class="evil-button" onclick="hireMinion()">Hire Evil Minion ($10)</button>
+  <button class="evil-button" onclick="upgradeFactory()">Upgrade Evil Factory ($100)</button>
+  <button class="evil-button" onclick="toggleShop()">Toggle Evil Shop</button>
+  <button class="evil-button" onclick="toggleHiringShop()">Toggle Hiring Shop</button>
+  <button class="evil-button" onclick="killMinion()">Kill Minion</button>
+  <button class="evil-button" onclick="startObby()">Evil Obby</button>
+  <button class="evil-button" onclick="showFeedback()">Send Feedback</button>
+</div>
+
+<div class="obby-container" style="display: none;">
+  <div class="obby-area"></div>
+  <button class="quit-button" onclick="quitObby()">QUIT OBBY</button>
+  <div class="mobile-controls">
+    <div class="joystick"></div>
+    <button class="jump-button">JUMP</button>
+    <button class="teleport-button" id="teleportButton">TELEPORT</button>
+  </div>
+</div>
+
+<div class="gamepass-popup" id="gamepassPopup">
+  <div class="gamepass-close" onclick="closeGamepass()">×</div>
+  <div class="gamepass-title">Money Booster Gamepass</div>
+  <div class="gamepass-price">R$ 10</div>
+  <button class="gamepass-button" onclick="buyGamepass()" id="gamepassButton">Buy Now!</button>
+</div>
+
+<div class="pause-overlay" id="pauseOverlay"></div>
+<div class="message-window" id="messageWindow">
+  <div id="messageContent"></div>
+</div>
+
+<div class="version-text">Version: 1.0</div>
+
+<script>
+let money = 0;
+let minions = [];
+let minionCost = 10;
+let factoryLevel = 1;
+let moneyPerSecond = 1;
+let placingMinion = false;
+let killingMinion = false;
+let killTimeout = null;
+let currentMinionType = 'basic';
+let debugMode = false;
+let isJumping = false;
+let keys = {};
+
+let playerPowers = {
+  jumpBoots: false,
+  speedBoost: false,
+  wings: false,
+  lavaImmunity: false,
+  teleporter: false
+};
+
+let teleportGhost = null;
+let isFlying = false;
+let trailElements = [];
+
+const MINION_TYPES = {
+  basic: {
+    health: 10,
+    damage: 1,
+    fireRate: 1000,
+    color: '#ffd700'
+  },
+  heavy: {
+    health: 15,
+    damage: 2,
+    fireRate: 2000,
+    color: '#ff8c00'
+  },
+  sniper: {
+    health: 10,
+    damage: 3,
+    fireRate: 3000,
+    color: '#ff1493'
+  }
+};
+
+let obbyActive = false;
+let player = null;
+let platforms = [];
+let playerVelocity = { x: 0, y: 0, jumpForce: -15, maxSpeed: 5 };
+let onGround = false;
+
+function checkDevice() {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  const content = document.getElementById('messageContent');
+  
+  overlay.style.display = 'block';
+  msgWindow.style.display = 'block';
+  
+  content.innerHTML = `
+    <h3 style="color: var(--evil-gold)">Select Your Device</h3>
+    <button class="evil-button" onclick="initObby('mobile')">Mobile</button>
+    <button class="evil-button" onclick="initObby('desktop')">Desktop</button>
+  `;
+}
+
+function startObby() {
+  checkDevice();
+}
+
+function initObby(deviceType) {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  overlay.style.display = 'none';
+  msgWindow.style.display = 'none';
+  
+  obbyActive = true;
+  document.querySelector('.obby-container').style.display = 'block';
+  document.querySelector('.evil-container').style.display = 'none';
+  
+  if (deviceType === 'mobile') {
+    document.querySelector('.mobile-controls').style.display = 'block';
+    setupMobileControls();
+  } else {
+    document.querySelector('.mobile-controls').style.display = 'none';
+    // Setup keyboard tracking
+    document.addEventListener('keydown', (e) => {
+      keys[e.code] = true;
+    });
+
+    document.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+    });
+  }
+  
+  generateObby();
+  initPlayer();
+  
+  const quitBtn = document.createElement('button');
+  quitBtn.className = 'quit-button';
+  quitBtn.textContent = 'QUIT OBBY';
+  quitBtn.onclick = quitObby;
+  document.querySelector('.obby-container').appendChild(quitBtn);
+  
+  const finishLine = document.createElement('div');
+  finishLine.className = 'finish-line';
+  document.querySelector('.obby-area').appendChild(finishLine);
+  
+  gameLoop();
+}
+
+function generateObby() {
+  const obbyArea = document.querySelector('.obby-area');
+  obbyArea.innerHTML = '';
+  
+  for (let i = 0; i < 10; i++) {
+    const platform = document.createElement('div');
+    platform.className = 'platform';
+    platform.style.width = Math.random() * 100 + 100 + 'px';
+    platform.style.height = '20px';
+    platform.style.left = (i * 200 + Math.random() * 100) + 'px';
+    platform.style.top = (Math.random() * 300 + 100) + 'px';
+    obbyArea.appendChild(platform);
+    platforms.push(platform);
+  }
+}
+
+function initPlayer() {
+  const obbyArea = document.querySelector('.obby-area');
+  player = document.createElement('div');
+  player.className = 'player';
+  player.style.left = '50px';
+  player.style.top = '50px';
+  obbyArea.appendChild(player);
+  
+  if (playerPowers.teleporter) {
+    teleportGhost = document.createElement('div');
+    teleportGhost.className = 'player teleport-ghost';
+    document.querySelector('.obby-area').appendChild(teleportGhost);
+  }
+  
+  if (!document.querySelector('.mobile-controls').style.display) {
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case 'ArrowLeft':
+        case 'a':
+          playerVelocity.x = -5;
+          break;
+        case 'ArrowRight':
+        case 'd':
+          playerVelocity.x = 5;
+          break;
+        case 'ArrowUp':
+        case 'w':
+        case ' ':
+          if(onGround) {
+            playerVelocity.y = playerVelocity.jumpForce;
+            onGround = false;
+          }
+          break;
+        case 't':
+          activateTeleport();
+          break;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      switch(e.key) {
+        case 'ArrowLeft':
+        case 'a':
+        case 'ArrowRight':
+        case 'd':
+          playerVelocity.x = 0;
+          break;
+      }
+    });
+  }
+}
+
+function activateTeleport() {
+  if (!playerPowers.teleporter || !teleportGhost || !player) return;
+  
+  const playerRect = player.getBoundingClientRect();
+  const teleportDistance = 150;
+  
+  const newX = parseFloat(player.style.left) + (playerVelocity.x >= 0 ? teleportDistance : -teleportDistance);
+  const newY = parseFloat(player.style.top);
+  
+  teleportGhost.style.left = newX + 'px';
+  teleportGhost.style.top = newY + 'px';
+  
+  setTimeout(() => {
+    player.style.left = teleportGhost.style.left;
+    player.style.top = teleportGhost.style.top;
+    teleportGhost.style.display = 'none';
+    
+    setTimeout(() => {
+      if (teleportGhost) {
+        teleportGhost.style.display = 'block';
+      }
+    }, 1000);
+  }, 3000);
+}
+
+function gameLoop() {
+  if (!obbyActive) return;
+
+  if (!onGround && !isFlying) {
+    playerVelocity.y += 0.8;
+  }
+
+  if (playerPowers.wings && (document.querySelector('.mobile-controls').style.display === 'none' ? 
+      (keys.Space || keys.ArrowUp || keys.KeyW) : isJumping)) {
+    isFlying = true;
+    playerVelocity.y = -5;
+  } else {
+    isFlying = false;
+  }
+
+  if (playerPowers.speedBoost && Math.abs(playerVelocity.x) > 0) {
+    createSpeedTrail();
+  }
+
+  if (playerPowers.teleporter && teleportGhost) {
+    const ghostX = parseFloat(player.style.left) + playerVelocity.x * 10;
+    const ghostY = parseFloat(player.style.top) + playerVelocity.y * 10;
+    teleportGhost.style.left = ghostX + 'px';
+    teleportGhost.style.top = ghostY + 'px';
+  }
+
+  const playerRect = player.getBoundingClientRect();
+  let newX = playerRect.left + playerVelocity.x;
+  let newY = playerRect.top + playerVelocity.y;
+
+  onGround = false;
+  platforms.forEach(platform => {
+    const platformRect = platform.getBoundingClientRect();
+    
+    if (newX + playerRect.width > platformRect.left &&
+        newX < platformRect.right &&
+        newY + playerRect.height > platformRect.top &&
+        newY < platformRect.bottom) {
+      if (playerRect.bottom <= platformRect.top) {
+        newY = platformRect.top - playerRect.height;
+        playerVelocity.y = 0;
+        onGround = true;
+      }
+    }
+  });
+
+  player.style.left = newX + 'px';
+  player.style.top = newY + 'px';
+
+  const finishLine = document.querySelector('.finish-line');
+  const finishRect = finishLine.getBoundingClientRect();
+  
+  if (playerRect.right > finishRect.left &&
+      playerRect.left < finishRect.right &&
+      playerRect.bottom > finishRect.top &&
+      playerRect.top < finishRect.bottom) {
+    completeObby();
+  }
+
+  if (newY > window.innerHeight) {
+    initPlayer();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+function createSpeedTrail() {
+  const trail = document.createElement('div');
+  trail.className = 'speed-trail';
+  trail.style.left = player.style.left;
+  trail.style.top = player.style.top;
+  document.querySelector('.obby-area').appendChild(trail);
+  
+  trailElements.push(trail);
+  setTimeout(() => {
+    trail.style.opacity = '0';
+    setTimeout(() => {
+      trail.remove();
+      trailElements = trailElements.filter(e => e !== trail);
+    }, 500);
+  }, 100);
+}
+
+function completeObby() {
+  obbyActive = false;
+  
+  const explosions = 10;
+  for (let i = 0; i < explosions; i++) {
+    const explosion = document.createElement('div');
+    explosion.style.position = 'absolute';
+    explosion.style.width = '50px';
+    explosion.style.height = '50px';
+    explosion.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    explosion.style.borderRadius = '50%';
+    explosion.style.left = Math.random() * 100 + 'vw';
+    explosion.style.top = Math.random() * 100 + 'vh';
+    explosion.style.animation = 'explode 1s forwards';
+    document.querySelector('.obby-container').appendChild(explosion);
+    
+    setTimeout(() => explosion.remove(), 1000);
+  }
+  
+  const reward = 1000;
+  money += reward;
+  updateMoney();
+  
+  showNotification(`OBBY COMPLETED! +$${reward} EVIL MONEY!`);
+  
+  setTimeout(() => {
+    document.querySelector('.obby-container').style.display = 'none';
+    document.querySelector('.evil-container').style.display = 'block';
+  }, 2000);
+}
+
+function quitObby() {
+  obbyActive = false;
+  document.querySelector('.obby-container').style.display = 'none';
+  document.querySelector('.evil-container').style.display = 'block';
+}
+
+function setupMobileControls() {
+  const joystick = document.querySelector('.joystick');
+  const jumpButton = document.querySelector('.jump-button');
+  const teleportButton = document.getElementById('teleportButton');
+  
+  let touching = false;
+  let touchStart = { x: 0, y: 0 };
+  
+  joystick.addEventListener('touchstart', (e) => {
+    touching = true;
+    touchStart.x = e.touches[0].clientX;
+    touchStart.y = e.touches[0].clientY;
+  });
+  
+  joystick.addEventListener('touchmove', (e) => {
+    if (!touching) return;
+    
+    const touch = e.touches[0];
+    const diffX = touch.clientX - touchStart.x;
+    
+    if (diffX < -30) {
+      playerVelocity.x = -5;
+    } else if (diffX > 30) {
+      playerVelocity.x = 5;
+    } else {
+      playerVelocity.x = 0;
+    }
+    
+    e.preventDefault();
+  });
+  
+  joystick.addEventListener('touchend', () => {
+    touching = false;
+    playerVelocity.x = 0;
+  });
+  
+  jumpButton.addEventListener('touchstart', () => {
+    isJumping = true;
+    if(onGround) {
+      playerVelocity.y = playerVelocity.jumpForce;
+      onGround = false;
+    }
+  });
+
+  jumpButton.addEventListener('touchend', () => {
+    isJumping = false;
+  });
+  
+  teleportButton.addEventListener('click', activateTeleport);
+}
+
+function closeGamepass() {
+  const popup = document.getElementById('gamepassPopup');
+  popup.style.display = 'none';
+}
+
+function updateMoney() {
+  document.getElementById('money').textContent = Math.floor(money);
+}
+
+function hireMinion() {
+  if (debugMode || money >= minionCost) {
+    placingMinion = true;
+    showNotification("Click a square to place your evil minion!");
+  } else {
+    showNotification("Not enough evil money! Need $10!");
+  }
+}
+
+function createMinion(cell) {
+  if (!placingMinion) return;
+
+  const cost = currentMinionType === 'basic' ? 10 :
+               currentMinionType === 'heavy' ? 25 : 50;
+
+  if (debugMode || money >= cost) {
+    if (!debugMode) money -= cost;
+    const minion = document.createElement('div');
+    minion.className = 'minion';
+    minion.dataset.type = currentMinionType;
+    minion.dataset.health = MINION_TYPES[currentMinionType].health;
+    minion.style.backgroundColor = MINION_TYPES[currentMinionType].color;
+
+    cell.appendChild(minion);
+    cell.classList.add('occupied');
+    minions.push(minion);
+
+    setInterval(() => {
+      if (Math.random() < 0.5) {
+        shoot(minion);
+      }
+    }, MINION_TYPES[currentMinionType].fireRate);
+
+    updateMoney();
+    placingMinion = false;
+    hideNotification();
+  }
+}
+
+function shoot(minion) {
+  const projectile = document.createElement('div');
+  projectile.className = 'projectile';
+  projectile.dataset.damage = MINION_TYPES[minion.dataset.type].damage;
+
+  const minionRect = minion.getBoundingClientRect();
+  const factoryRect = document.getElementById('factory').getBoundingClientRect();
+
+  projectile.style.left = (minionRect.left - factoryRect.left + minionRect.width / 2) + 'px';
+  projectile.style.top = (minionRect.top - factoryRect.top + minionRect.height / 2) + 'px';
+
+  document.getElementById('factory').appendChild(projectile);
+
+  const anim = projectile.animate([
+    { left: projectile.style.left },
+    { left: '100%' }
+  ], {
+    duration: 1000,
+    easing: 'linear'
+  });
+
+  anim.onfinish = () => projectile.remove();
+
+  const checkCollision = setInterval(() => {
+    const projectileRect = projectile.getBoundingClientRect();
+    const invaders = document.querySelectorAll('.invader');
+
+    invaders.forEach(invader => {
+      const invaderRect = invader.getBoundingClientRect();
+      if (projectileRect.right > invaderRect.left &&
+          projectileRect.left < invaderRect.right &&
+          projectileRect.bottom > invaderRect.top &&
+          projectileRect.top < invaderRect.bottom) {
+        clearInterval(checkCollision);
+        projectile.remove();
+
+        const health = parseInt(invader.dataset.health) - parseInt(projectile.dataset.damage);
+        invader.dataset.health = health;
+        invader.style.opacity = health / invader.dataset.maxHealth;
+
+        if (health <= 0) {
+          invader.remove();
+          money += 5;
+          updateMoney();
+        }
+      }
+    });
+  }, 50);
+
+  setTimeout(() => clearInterval(checkCollision), 1000);
+}
+
+function spawnInvader() {
+  const factory = document.getElementById('factory');
+  const invader = document.createElement('div');
+  invader.className = 'invader';
+
+  const health = Math.floor(Math.random() * 3) + 3;
+  invader.dataset.health = health;
+  invader.dataset.maxHealth = health;
+
+  const gridCellHeight = factory.offsetHeight / 5;
+  const randomRow = Math.floor(Math.random() * 5);
+  invader.style.top = (randomRow * gridCellHeight + gridCellHeight / 4) + 'px';
+
+  factory.appendChild(invader);
+
+  const attackInterval = setInterval(() => {
+    if (!invader.isConnected) {
+      clearInterval(attackInterval);
+      return;
+    }
+    attackNearbyMinion(invader);
+  }, 1000);
+
+  setTimeout(() => {
+    clearInterval(attackInterval);
+    if (invader.isConnected) invader.remove();
+  }, 10000);
+}
+
+function attackNearbyMinion(invader) {
+  const invaderRect = invader.getBoundingClientRect();
+  const factory = document.getElementById('factory');
+  const cells = factory.querySelectorAll('.grid-cell');
+
+  cells.forEach(cell => {
+    if (!cell.classList.contains('occupied')) return;
+
+    const minion = cell.querySelector('.minion');
+    if (!minion) return;
+
+    const minionRect = minion.getBoundingClientRect();
+
+    if (Math.abs(invaderRect.left - minionRect.left) < 100) {
+      const minionHealth = parseInt(minion.dataset.health);
+      if (minionHealth <= 1) {
+        const index = minions.indexOf(minion);
+        if (index > -1) minions.splice(index, 1);
+        cell.classList.remove('occupied');
+        minion.remove();
+      } else {
+        minion.dataset.health = minionHealth - 1;
+        minion.style.opacity = minionHealth / MINION_TYPES[minion.dataset.type].health;
+      }
+    }
+  });
+}
+
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.textContent = message;
+  notification.id = 'evilNotification';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => hideNotification(), 3000);
+}
+
+function hideNotification() {
+  const notification = document.getElementById('evilNotification');
+  if (notification) {
+    notification.remove();
+  }
+}
+
+function toggleHiringShop() {
+  const shop = document.getElementById('hiringShop');
+  const currentRight = shop.style.right;
+  shop.style.right = currentRight === '0px' ? '-300px' : '0px';
+}
+
+function toggleShop() {
+  const sidebar = document.querySelector('.evil-sidebar');
+  const currentLeft = sidebar.style.left;
+  sidebar.style.left = currentLeft === '0px' ? '-270px' : '0px';
+}
+
+function hireSpecialMinion(type, cost) {
+  if (debugMode || money >= cost) {
+    placingMinion = true;
+    currentMinionType = type;
+    showNotification(`Click a square to place your ${type} minion!`);
+  } else {
+    showNotification(`Not enough evil money! Need $${cost}!`);
+  }
+}
+
+function initializeGrid() {
+  const factory = document.getElementById('factory');
+  factory.innerHTML = '';
+  
+  for (let i = 0; i < 45; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    cell.addEventListener('click', function() {
+      if (placingMinion && !cell.classList.contains('occupied')) {
+        createMinion(cell);
+      } else if (killingMinion && cell.classList.contains('occupied')) {
+        const minion = cell.querySelector('.minion');
+        if (minion) {
+          const index = minions.indexOf(minion);
+          if (index > -1) {
+            minions.splice(index, 1);
+          }
+          cell.classList.remove('occupied');
+          minion.remove();
+          killingMinion = false;
+          if (killTimeout) {
+            clearTimeout(killTimeout);
+            killTimeout = null;
+          }
+          hideNotification();
+          showNotification("Minion destroyed!");
+          setTimeout(() => hideNotification(), 2000);
+        }
+      }
+    });
+    factory.appendChild(cell);
+  }
+}
+
+function upgradeFactory() {
+  if (debugMode || money >= 100) {
+    if (!debugMode) money -= 100;
+    factoryLevel++;
+    moneyPerSecond = factoryLevel * minions.length;
+    updateMoney();
+    document.querySelector('.evil-factory').style.backgroundColor = `rgb(${48 * factoryLevel}, 0, 0)`;
+  }
+}
+
+function killMinion() {
+  killingMinion = true;
+  showNotification("Click a minion to destroy it! (10 seconds remaining)");
+  
+  if (killTimeout) clearTimeout(killTimeout);
+  killTimeout = setTimeout(() => {
+    killingMinion = false;
+    hideNotification();
+    showNotification("Kill operation canceled!");
+    setTimeout(() => hideNotification(), 2000);
+  }, 10000);
+}
+
+function buyGamepass() {
+  if (money >= 10) {
+    money -= 1000;
+    updateMoney();
+    
+    const popup = document.getElementById('gamepassPopup');
+    const button = document.getElementById('gamepassButton');
+    
+    popup.classList.add('exploding');
+    button.classList.add('evil');
+    button.textContent = "MUHAHAHA!";
+    
+    setTimeout(() => {
+      popup.style.display = 'none';
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `Got scammed? <button class='evil-button' onclick='startLawsuit()'>Contact Lawyer</button>`;
+      document.body.appendChild(notification);
+    }, 1000);
+  } else {
+    showNotification("Need $10 evil money to buy gamepass!");
+  }
+}
+
+function startLawsuit() {
+  const notifications = document.querySelectorAll('.notification');
+  notifications.forEach(n => n.remove());
+
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  const content = document.getElementById('messageContent');
+  
+  overlay.style.display = 'block';
+  msgWindow.style.display = 'block';
+  
+  content.innerHTML = `
+    <h3 style="color: var(--evil-gold)">Message Lawyer</h3>
+    <button class="message-option" onclick="sendMessage(1)">Yo bro i got scammed</button>
+    <button class="message-option" onclick="sendMessage(2)">Help! Got scammed!</button>
+  `;
+}
+
+function sendMessage(option) {
+  const content = document.getElementById('messageContent');
+  
+  content.innerHTML = `
+    <div class="lawyer-message">Hold on, let me handle this...</div>
+  `;
+  
+  setTimeout(() => {
+    content.innerHTML += `
+      <div class="lawyer-message">GREAT NEWS! We won the lawsuit!</div>
+      <div class="lawyer-message">We got $10,000 in damages!</div>
+      <button class="evil-button" onclick="endLawsuit()">Awesome!</button>
+    `;
+  }, 2000);
+}
+
+function endLawsuit() {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  
+  overlay.style.display = 'none';
+  msgWindow.style.display = 'none';
+  
+  money += 10000;
+  updateMoney();
+  showNotification("Lawsuit money received: $10,000!");
+}
+
+function showLogin() {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  const content = document.getElementById('messageContent');
+  
+  overlay.style.display = 'block';
+  msgWindow.style.display = 'block';
+  
+  content.innerHTML = `
+    <h3 style="color: var(--evil-gold)">Debug Login</h3>
+    <input type="text" id="username" placeholder="Username" style="margin: 5px; padding: 5px;"><br>
+    <input type="password" id="password" placeholder="Password" style="margin: 5px; padding: 5px;"><br>
+    <button class="evil-button" onclick="checkLogin()">Enter</button>
+  `;
+}
+
+function checkLogin() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  if (username === 'Furry' && password === 'furry') {
+    debugMode = true;
+    const overlay = document.getElementById('pauseOverlay');
+    const msgWindow = document.getElementById('messageWindow');
+    overlay.style.display = 'none';
+    msgWindow.style.display = 'none';
+    showNotification("Debug Mode Activated!");
+  } else {
+    showNotification("Invalid credentials!");
+  }
+}
+
+function buyItem(itemName, cost) {
+  if (debugMode || money >= cost) {
+    if (!debugMode) {
+      money -= cost;
+      updateMoney();
+    }
+    
+    playerPowers[itemName] = true;
+    
+    if (obbyActive && player) {
+      switch(itemName) {
+        case 'jumpBoots':
+          player.classList.add('with-boots');
+          playerVelocity.jumpForce = -20;
+          showNotification("Evil Jump Boots acquired!");
+          break;
+        case 'speedBoost':
+          playerVelocity.maxSpeed = 8;
+          showNotification("Speed Demon power unlocked!");
+          break;
+        case 'wings':
+          showNotification("Evil Wings equipped!");
+          break;
+        case 'lavaImmunity':
+          showNotification("Lava Immunity granted!");
+          break;
+        case 'teleporter':
+          initTeleporter();
+          showNotification("Evil Teleporter ready!");
+          break;
+      }
+    } else {
+      showNotification(`${itemName} purchased! Enter obby to use it!`);
+    }
+    
+    const items = document.querySelectorAll('.shop-item');
+    let foundCurrent = false;
+    items.forEach(item => {
+      if (foundCurrent && item.classList.contains('locked')) {
+        item.classList.remove('locked');
+        foundCurrent = false;
+      }
+      if (item.querySelector(`button[onclick="buyItem('${itemName}', ${cost})"]`)) {
+        foundCurrent = true;
+      }
+    });
+  } else {
+    showNotification(`Not enough evil money! Need $${cost}!`);
+  }
+}
+
+function initTeleporter() {
+  if (!teleportGhost && player && obbyActive) {
+    teleportGhost = document.createElement('div');
+    teleportGhost.className = 'player teleport-ghost';
+    document.querySelector('.obby-area').appendChild(teleportGhost);
+    
+    if (document.querySelector('.mobile-controls').style.display === 'block') {
+      const teleportButton = document.getElementById('teleportButton');
+      if (teleportButton) {
+        teleportButton.addEventListener('click', activateTeleport);
+      }
+    }
+  }
+}
+
+function showFeedback() {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  const content = document.getElementById('messageContent');
+  
+  overlay.style.display = 'block';
+  msgWindow.style.display = 'block';
+  
+  content.innerHTML = `
+    <h3 style="color: var(--evil-gold)">Send Evil Feedback</h3>
+    <textarea 
+      class="feedback-input" 
+      id="feedbackText" 
+      placeholder="Enter your evil feedback here..."></textarea>
+    <button class="evil-button" onclick="sendFeedback()">Send Feedback</button>
+    <button class="evil-button" onclick="closeFeedback()">Cancel</button>
+  `;
+}
+
+function closeFeedback() {
+  const overlay = document.getElementById('pauseOverlay');
+  const msgWindow = document.getElementById('messageWindow');
+  
+  overlay.style.display = 'none';
+  msgWindow.style.display = 'none';
+}
+
+function sendFeedback() {
+  const feedback = document.getElementById('feedbackText').value;
+  
+  if (!feedback.trim()) {
+    showNotification("Please enter some feedback first!");
+    return;
+  }
+
+  const webhookUrl = "https://discord.com/api/webhooks/1306091244576964658/tzd3fIqbWE0AwSGRpgAS3p1MDxf15cm-NxNmhDYW3RNVR3d8kdNkOGU-S7XNZlxLF00G";
+  
+  fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      content: `New Evil Feedback:\n${feedback}`
+    })
+  })
+  .then(response => {
+    if (response.ok) {
+      showNotification("Feedback sent successfully!");
+      closeFeedback();
+    } else {
+      showNotification("Error sending feedback!");
+    }
+  })
+  .catch(error => {
+    showNotification("Error sending feedback!");
+    console.error('Error:', error);
+  });
+}
+
+setInterval(() => {
+  money += moneyPerSecond * (minions.length + 1) / 10;
+  updateMoney();
+}, 100);
+
+setInterval(() => {
+  money += 1;
+  updateMoney();
+}, 1000);
+
+document.querySelector('.evil-sidebar').style.transition = 'left 0.3s ease-in-out';
+document.querySelector('.evil-sidebar').style.left = '-270px';
+initializeGrid();
+setInterval(spawnInvader, 3000);
+</script>
+
+</body>
+</html>
