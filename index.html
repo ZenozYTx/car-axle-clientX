@@ -3,42 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My First Website</title>
+    <title>Dynamic Bookmarklet Tool</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
         }
-        header {
-            background-color: #333;
+
+        h1 {
+            color: #333;
+        }
+
+        textarea {
+            width: 90%;
+            height: 150px;
+            margin: 20px 0;
+            font-size: 14px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
             color: white;
-            padding: 1rem 0;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        main {
-            padding: 2rem;
+
+        button:hover {
+            background-color: #0056b3;
         }
-        a {
-            color: #007BFF;
-            text-decoration: none;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        a:hover {
-            text-decoration: underline;
+
+        .note {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Website!</h1>
-    </header>
-    <main>
-        <p>Hello, world! This is my very first website hosted on GitHub Pages.</p>
-        <p>Click <a href="https://github.com">here</a> to visit GitHub!</p>
-    </main>
-    <footer>
-        <p>&copy; 2024 Your Name</p>
-    </footer>
+    <div class="container">
+        <h1>Dynamic Bookmarklet Tool</h1>
+        <p>Click the button below to copy the dynamic bookmarklet or execute it directly.</p>
+
+        <!-- Bookmarklet Display -->
+        <textarea id="bookmarkletCode" readonly>
+Fetching the latest bookmarklet code...
+        </textarea>
+
+        <!-- Buttons -->
+        <button id="fetchAndCopyButton">Copy Bookmarklet</button>
+        <button id="executeButton">Run Bookmarklet</button>
+
+        <!-- Helpful Note -->
+        <p class="note">
+            The bookmarklet code is dynamically fetched from the latest version of your repository.
+        </p>
+    </div>
+
+    <!-- JavaScript to Add Functionality -->
+    <script>
+        // URL to fetch the JavaScript file
+        const jsFileUrl = 'https://raw.githubusercontent.com/ZenozYTx/car-axle-clientX/refs/heads/main/dist/build.js';
+
+        // Elements
+        const bookmarkletCode = document.getElementById('bookmarkletCode');
+        const fetchAndCopyButton = document.getElementById('fetchAndCopyButton');
+        const executeButton = document.getElementById('executeButton');
+
+        // Function to fetch the JavaScript file and convert it to a bookmarklet
+        async function fetchBookmarklet() {
+            try {
+                // Fetch the raw JavaScript code from the URL
+                const response = await fetch(jsFileUrl);
+                if (!response.ok) throw new Error('Failed to fetch the script');
+                const script = await response.text();
+
+                // Convert to a bookmarklet
+                const bookmarklet = `javascript:(function(){${encodeURIComponent(script)}})();`;
+
+                // Update the textarea
+                bookmarkletCode.value = bookmarklet;
+
+                return bookmarklet;
+            } catch (error) {
+                console.error('Error fetching bookmarklet:', error);
+                bookmarkletCode.value = 'Error fetching bookmarklet. Check console for details.';
+                return null;
+            }
+        }
+
+        // Fetch and display the bookmarklet on page load
+        fetchBookmarklet();
+
+        // Copy the Bookmarklet to Clipboard
+        fetchAndCopyButton.addEventListener('click', async () => {
+            const bookmarklet = await fetchBookmarklet();
+            if (bookmarklet) {
+                navigator.clipboard.writeText(bookmarklet).then(() => {
+                    alert('Bookmarklet copied to clipboard!');
+                });
+            }
+        });
+
+        // Execute the Bookmarklet
+        executeButton.addEventListener('click', async () => {
+            const bookmarklet = await fetchBookmarklet();
+            if (bookmarklet) {
+                eval(decodeURIComponent(bookmarklet.replace('javascript:(function(){', '').replace('})();', '')));
+            }
+        });
+    </script>
 </body>
 </html>
