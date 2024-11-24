@@ -5,7 +5,7 @@
 #### give a star, this project took a while <3 ⭐️✨
 
 <img src="docs/caraxle.png" alt="drawing" width="300"/><br>
-<a href="https://car-axle-client.github.io">Install the latest version</a>
+<a href="https://zenozytx.github.io/car-axle-clientX/">Install the latest version</a>
 
 <hr>
 <p align="center">
@@ -13,7 +13,7 @@
   -
   <a href="#screenshots">Screenshots</a>
   -
-  <a href="https://car-axle-client.github.io">Install</a>
+  <a href="https://zenozytx.github.io/car-axle-clientX/">Install</a>
   -
   <a href="https://github.com/car-axle-client/car-axle-client/graphs/contributors">Contributions</a>
   -
