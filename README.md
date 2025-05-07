@@ -51,7 +51,7 @@ If this website is blocked, join the discord for alternate links.
 Install from js code:
 
 ```
-fetch("https://raw.githubusercontent.com/ZenozYTx/car-axle-clientt/refs/heads/main/dist/build.js")                .then((res) => res.text())                .then((js) => eval(js));
+fetch("https://raw.githubusercontent.com/ZenozYTx/car-axle-clientX/refs/heads/main/dist/build.js")                .then((res) => res.text())                .then((js) => eval(js));
 ```
 
 ## Screenshots
